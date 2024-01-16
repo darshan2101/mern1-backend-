@@ -7,6 +7,7 @@ const Op = db.Sequelize.Op;
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const sendMail = require("../services/sendMail");
 
 exports.signup = (req, res) => {
 	// Save User to Database
@@ -138,6 +139,7 @@ exports.resetPassword = async (req, res) => {
 		if (!email) {
 			res.status(404).send({ message: "Email is required to Reset Password" });
 		}
+		sendMail(email);
 	} catch (error) {
 		return res.status(500).send({ message: `${err}` });
 	}

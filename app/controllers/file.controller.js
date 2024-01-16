@@ -14,7 +14,7 @@ const upload = async (req, res) => {
 		const fileBuffer = req.file.buffer;
 
 		await gcsService.uploadFile(
-			blobName,
+			`images/${blobName}`,
 			fileBuffer,
 			null,
 			"public-read",
@@ -47,7 +47,7 @@ const upload = async (req, res) => {
  */
 const getListFiles = async (req, res) => {
 	try {
-		const files = await gcsService.listObject("");
+		const files = await gcsService.listObject("images/");
 		const fileInfos = [];
 
 		for (const file of files) {
@@ -67,8 +67,6 @@ const getListFiles = async (req, res) => {
 		});
 	}
 };
-
-module.exports = getListFiles;
 
 const download = async (req, res) => {
 	try {
