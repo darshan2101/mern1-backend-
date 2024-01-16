@@ -1,5 +1,4 @@
 const db = require("../models");
-const nodemailer = require("nodemailer");
 const config = require("../config/auth.config");
 
 const { user: User, role: Role, refreshToken: RefreshToken } = db;
