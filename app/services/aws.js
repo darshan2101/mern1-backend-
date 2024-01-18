@@ -21,7 +21,7 @@ const S3 = new AWS.S3();
  * Generate signed URL from AWS
  * @param {*} filePath File path of accessing file
  */
-exports.getSignedURL = (filePath, bucket = null, time = null) => {
+exports.getSignedImageURL = (filePath, bucket = null, time = null) => {
 	const params = {
 		Bucket: bucket || process.env.AWS_S3_BUCKET_NAME,
 		Key: filePath,

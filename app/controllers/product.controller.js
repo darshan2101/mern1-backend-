@@ -1,6 +1,6 @@
 const sharp = require("sharp");
 const db = require("../models");
-const { getSignedURL, uploadFile } = require("../services/aws");
+const { getSignedImageURL, uploadFile } = require("../services/aws");
 const { excludeFields, toObject, formatDateToIST } = require("../utils/helper");
 const Op = db.Sequelize.Op;
 const Product = db.product;
@@ -13,6 +13,7 @@ const createProduct = async (req, res) => {
 		const { name, price, description } = req.body;
 		const created_by_id = req.userId;
 
+		// console.log(JSON.stringify(req.file.originalname));
 		// Check if all necessary fields are present
 		if (!name || !price || !created_by_id) {
 			return res
@@ -20,6 +21,7 @@ const createProduct = async (req, res) => {
 				.json({ message: "Please provide all required fields." });
 		}
 		const file = req.file;
+		// console.log(`\n file --> ${JSON.stringify(file.originalname)}`);
 		if (!file) {
 			return res
 				.status(400)
@@ -139,18 +141,21 @@ const getAllProduct = async (req, res) => {
 			offset,
 		});
 
-		const formattedProducts = products.rows.map((product) => {
-			let { image_file_name, id, createdAt, ...restProduct } =
-				toObject(product);
+		// Use Promise.all to parallelize the asynchronous operations
+		const formattedProducts = await Promise.all(
+			products.rows.map(async (product) => {
+				let { image_file_name, id, createdAt, ...restProduct } =
+					toObject(product);
 
-			const logo = image_file_name
-				? getSignedURL(`products/${id}/thumb/${image_file_name}`)
-				: null;
+				const logo = image_file_name
+					? await getSignedImageURL(`products/${id}/thumb/${image_file_name}`)
+					: null;
 
-			createdAt = formatDateToIST(createdAt);
+				createdAt = formatDateToIST(createdAt);
 
-			return { ...restProduct, id, logo, createdAt };
-		});
+				return { ...restProduct, id, logo, createdAt };
+			})
+		);
 
 		// Send paginated response
 		const response = getPagingData(
@@ -164,6 +169,7 @@ const getAllProduct = async (req, res) => {
 		res.status(500).json({ message: "Internal Server Error" });
 	}
 };
+
 const getProduct = async (req, res) => {
 	try {
 		const userId = req.userId;
@@ -178,13 +184,20 @@ const getProduct = async (req, res) => {
 		if (!product) {
 			return res.status(404).json({ message: "Product not found." });
 		}
+		// console.log(` \n product --> ${JSON.stringify(product)}`);
 
 		product.logo = product.image_file_name
-			? getSignedURL(
+			? await getSignedImageURL(
 					`products/${product.id}/original/${product.image_file_name}`
 			  )
 			: null;
+		// : null;
+		// console.log(`\n product after adding image --> ${JSON.stringify(product)}`);
 		delete product.image_file_name;
+
+		// console.log(
+		// 	`\n product after removing imagefile name --> ${JSON.stringify(product)}`
+		// );
 
 		// Check if the user has the 'admin' role
 		const isAdmin = await hasRole(userId, "admin");

@@ -1,6 +1,6 @@
 const multer = require("multer");
+const multerS3 = require("multer-s3");
 const { authJwt } = require("../middleware");
-const { upload } = require("../middleware/mutlerAuth");
 const userController = require("../controllers/user.controller");
 const fileController = require("../controllers/file.controller");
 const productController = require("../controllers/product.controller");

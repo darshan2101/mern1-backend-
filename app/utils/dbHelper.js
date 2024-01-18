@@ -1,4 +1,4 @@
-const { excludeFields, paginate, removeFields } = require("../utils/helper");
+const { excludeFields, paginate } = require("../utils/helper");
 /**
  * Get single record by id from given model
  * @param {*} id id of record
