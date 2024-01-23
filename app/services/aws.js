@@ -1,102 +1,102 @@
-const AWS = require("aws-sdk");
-const configParams = {
-	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-	region: process.env.AWS_REGION,
-	retryDelayOptions: { base: 50 },
-	maxRetries: 1,
-};
+// const AWS = require("aws-sdk");
+// const configParams = {
+// 	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+// 	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+// 	region: process.env.AWS_REGION,
+// 	retryDelayOptions: { base: 50 },
+// 	maxRetries: 1,
+// };
 
-/**
- * AWS configuration
- */
-AWS.config.update(configParams);
+// /**
+//  * AWS configuration
+//  */
+// AWS.config.update(configParams);
 
-/**
- * AWS S3 instance
- */
-const S3 = new AWS.S3();
+// /**
+//  * AWS S3 instance
+//  */
+// const S3 = new AWS.S3();
 
-/**
- * Generate signed URL from AWS
- * @param {*} filePath File path of accessing file
- */
-exports.getSignedImageURL = (filePath, bucket = null, time = null) => {
-	const params = {
-		Bucket: bucket || process.env.AWS_S3_BUCKET_NAME,
-		Key: filePath,
-		Expires: time || 5000,
-	};
-	return S3.getSignedUrl("getObject", params);
-};
+// /**
+//  * Generate signed URL from AWS
+//  * @param {*} filePath File path of accessing file
+//  */
+// exports.getSignedImageURL = (filePath, bucket = null, time = null) => {
+// 	const params = {
+// 		Bucket: bucket || process.env.AWS_S3_BUCKET_NAME,
+// 		Key: filePath,
+// 		Expires: time || 5000,
+// 	};
+// 	return S3.getSignedUrl("getObject", params);
+// };
 
-/**
- * Upload file on AWS
- * @param {string} filePath Address of file
- * @param {buffer} image image data
- * @param {string} bucket Name of bucket in which you want to upload
- * @param {string} acl Type of access control like `private`, `public-read`, `public-read-write`
- * @param {string} contentType File content type like `application/pdf`, `image/jpg`, `image/png`
- */
-exports.uploadFile = (
-	filePath,
-	image,
-	bucket = null,
-	acl = null,
-	contentType = null
-) => {
-	const params = { Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filePath };
-	if (contentType) params.ContentType = contentType;
-	if (bucket) params.Bucket = bucket;
-	if (acl) params.ACL = acl;
-	params.Body = image instanceof Buffer ? image : image.buffer;
-	return S3.upload(params).promise();
-};
+// /**
+//  * Upload file on AWS
+//  * @param {string} filePath Address of file
+//  * @param {buffer} image image data
+//  * @param {string} bucket Name of bucket in which you want to upload
+//  * @param {string} acl Type of access control like `private`, `public-read`, `public-read-write`
+//  * @param {string} contentType File content type like `application/pdf`, `image/jpg`, `image/png`
+//  */
+// exports.uploadFile = (
+// 	filePath,
+// 	image,
+// 	bucket = null,
+// 	acl = null,
+// 	contentType = null
+// ) => {
+// 	const params = { Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filePath };
+// 	if (contentType) params.ContentType = contentType;
+// 	if (bucket) params.Bucket = bucket;
+// 	if (acl) params.ACL = acl;
+// 	params.Body = image instanceof Buffer ? image : image.buffer;
+// 	return S3.upload(params).promise();
+// };
 
-/**
- * Get S3 file object buffer
- * @param {string} filePath  Address of file
- * @param {string} bucket Name of bucket in which you want to upload
- */
-exports.getObject = async (filePath, bucket = null) => {
-	const bucketParam = bucket || process.env.AWS_S3_BUCKET_NAME;
-	const params = { Bucket: bucketParam, Key: filePath };
-	const fileObject = await S3.getObject(params).promise();
-	return fileObject.Body;
-};
+// /**
+//  * Get S3 file object buffer
+//  * @param {string} filePath  Address of file
+//  * @param {string} bucket Name of bucket in which you want to upload
+//  */
+// exports.getObject = async (filePath, bucket = null) => {
+// 	const bucketParam = bucket || process.env.AWS_S3_BUCKET_NAME;
+// 	const params = { Bucket: bucketParam, Key: filePath };
+// 	const fileObject = await S3.getObject(params).promise();
+// 	return fileObject.Body;
+// };
 
-/**
- * Check given path is exist or not in aws
- * @param {*} filePath Address of file
- */
-exports.listObject = async (filePath, bucket = null) => {
-	const params = {
-		Bucket: bucket || process.env.AWS_S3_BUCKET_NAME,
-		Prefix: filePath,
-	};
-	const data = await S3.listObjectsV2(params).promise();
-	return data;
-};
+// /**
+//  * Check given path is exist or not in aws
+//  * @param {*} filePath Address of file
+//  */
+// exports.listObject = async (filePath, bucket = null) => {
+// 	const params = {
+// 		Bucket: bucket || process.env.AWS_S3_BUCKET_NAME,
+// 		Prefix: filePath,
+// 	};
+// 	const data = await S3.listObjectsV2(params).promise();
+// 	return data;
+// };
 
-/**
- * Upload base64 file on AWS
- * @param {*} filePath Address of file
- * @param {*} image image data
- */
-exports.uploadBase64File = (filePath, image, bucket = null) => {
-	const params = { Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filePath };
-	if (bucket) params.Bucket = bucket;
-	params.Body = image instanceof Buffer ? image : image;
-	return S3.putObject(params).promise();
-};
+// /**
+//  * Upload base64 file on AWS
+//  * @param {*} filePath Address of file
+//  * @param {*} image image data
+//  */
+// exports.uploadBase64File = (filePath, image, bucket = null) => {
+// 	const params = { Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filePath };
+// 	if (bucket) params.Bucket = bucket;
+// 	params.Body = image instanceof Buffer ? image : image;
+// 	return S3.putObject(params).promise();
+// };
 
-/**
- * Remove file from AWS
- * @param {string} filePath Address of file which you want to delete
- * @param {string} bucket Name of bucket from which you want to remove specific file
- */
-exports.removeFile = (filePath, bucket = null) => {
-	const params = { Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filePath };
-	if (bucket) params.Bucket = bucket;
-	return S3.deleteObject(params).promise();
-};
+// /**
+//  * Remove file from AWS
+//  * @param {string} filePath Address of file which you want to delete
+//  * @param {string} bucket Name of bucket from which you want to remove specific file
+//  */
+// exports.removeFile = (filePath, bucket = null) => {
+// 	const params = { Bucket: process.env.AWS_S3_BUCKET_NAME, Key: filePath };
+// 	if (bucket) params.Bucket = bucket;
+// 	return S3.deleteObject(params).promise();
+// };

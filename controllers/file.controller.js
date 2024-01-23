@@ -56,7 +56,7 @@ const getListFiles = async (req, res) => {
 				name: file.name,
 				url: url,
 			});
-			console.log(`\n file --> ${file.name} --> ${url}`);
+			// console.log(`\n file --> ${file.name} --> ${url}`);
 		}
 
 		res.status(200).send(fileInfos);

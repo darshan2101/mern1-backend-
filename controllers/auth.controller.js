@@ -1,11 +1,7 @@
 const db = require("../models");
 const config = require("../config/auth.config");
 
-// const { user: User, role: Role, refreshToken: RefreshToken } = db;
-const Role = db.role;
-const RefreshToken = db.refreshToken;
-
-const User = db.user;
+const { user: User, role: Role, refreshToken: RefreshToken } = db;
 
 const Op = db.Sequelize.Op;
 
@@ -144,18 +140,5 @@ exports.refreshToken = async (req, res) => {
 		});
 	} catch (err) {
 		return res.status(500).send({ message: err });
-	}
-};
-
-exports.resetPassword = async (req, res) => {
-	try {
-		const email = req.body.email;
-		if (!email) {
-			res.status(404).send({ message: "Email is required to Reset Password" });
-		}
-		const messageResp = await sendMail(email, "Reset Password");
-		console.log(`response --> ${messageResp}`);
-	} catch (error) {
-		return res.status(500).send({ message: `${err}` });
 	}
 };

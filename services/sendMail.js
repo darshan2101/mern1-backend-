@@ -28,7 +28,7 @@ const createTransporter = async () => {
 			service: "gmail",
 			auth: {
 				type: "OAuth2",
-				user: process.env.USER_EMAIL,
+				user: process.env.SENDER_EMAIL,
 				accessToken,
 				clientId: process.env.CLIENT_ID,
 				clientSecret: process.env.CLIENT_SECRET,
@@ -44,7 +44,7 @@ const createTransporter = async () => {
 exports.sendMail = async (email, subject, text) => {
 	try {
 		const mailOptions = {
-			from: "Admin@Apex.com",
+			from: process.env.SENDER_EMAIL,
 			to: email,
 			subject,
 			text,
@@ -55,5 +55,15 @@ exports.sendMail = async (email, subject, text) => {
 		return messageId;
 	} catch (err) {
 		console.log("ERROR:", err);
+	}
+};
+
+exports.sendResetMail = async (message) => {
+	try {
+		let emailTransporter = await createTransporter();
+		const response = await emailTransporter.sendMail(message);
+		return response.messageId;
+	} catch (err) {
+		console.log("ERROR: ", err);
 	}
 };

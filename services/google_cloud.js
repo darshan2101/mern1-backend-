@@ -3,7 +3,7 @@ const path = require("path");
 
 const storage = new Storage({
 	projectId: process.env.GCLOUD_PROJECT_ID,
-	keyFilename: path.join(__dirname, "../../google-cloud-key.json"),
+	keyFilename: path.join(__dirname, "../google-cloud-key.json"),
 });
 
 /**

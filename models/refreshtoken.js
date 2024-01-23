@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
 	class RefreshToken extends Model {
 		static associate(models) {
 			models.refreshToken.belongsTo(models.user, {
-				foreignKey: "created_by_id",
+				foreignKey: "user_id",
 				targetKey: "id",
 			});
 		}
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
 
 		let refreshToken = await this.create({
 			token: _token,
-			userId: user.id,
+			user_id: user.id,
 			expiryDate: expiredAt.getTime(),
 		});
 
